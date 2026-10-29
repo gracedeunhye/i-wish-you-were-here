@@ -125,7 +125,7 @@ async function setup() {
 
 //text loop
 function draw() {
-  background("rgb(227 239 247)");
+  background(227, 239, 247);
 
   let typeBlink = "";
   if (frameCount % 60 < 30) {
@@ -164,7 +164,7 @@ function draw() {
     closeX = centerX + imgW / 2 - 25;
     closeY = centerY - imgH / 2 + 25;
 
-    fill("rgb(24 83 145)");
+    fill(24,83,145);
     noStroke();
     circle(closeX, closeY, 35);
 
@@ -237,7 +237,7 @@ function draw() {
         let arrowX = width / 4;
         let arrowY = height * 0.72;
 
-        fill("rgb(24 83 145)");
+        fill(24,83,145);
         textSize(60);
         textAlign(CENTER, CENTER);
         text(">", arrowX, arrowY);
@@ -273,7 +273,7 @@ function draw() {
         rect(x1 - 25, y1 - 40, w1 + 50, 80, 20);
         triangle(x1 - 25, y1 + 20, x1 - 38, y1 + 42, x1 - 5, y1 + 40);
 
-        fill("rgb(24 83 145)");
+        fill(24, 83, 145);
         text(visibleLeft, x1, y1);
       }
 
@@ -281,7 +281,7 @@ function draw() {
       if (visibleRight.length > 0) {
         let w2 = textWidth(visibleRight);
         textAlign(RIGHT, CENTER);
-        fill("rgb(24 83 145)");
+        fill(24,83,145);
         noStroke();
         rect(x2 - w2 - 25, y2 - 40, w2 + 50, 80, 20);
         triangle(x2 + 25, y2 + 20, x2 + 38, y2 + 42, x2 + 5, y2 + 40);
@@ -296,7 +296,7 @@ function draw() {
       let arrowX = width / 4;
       let arrowY = height * 0.72;
 
-      fill("rgb(24 83 145)");
+      fill(24, 83, 145);
       textSize(60);
       textAlign(CENTER, CENTER);
       text(">", arrowX, arrowY);
@@ -324,7 +324,7 @@ function drawBubble(visibleTxt, engTxt, x, y, isRightSide, isFinished) {
 
   if (isRightSide) {
     textAlign(RIGHT, CENTER);
-    fill("rgb(24 83 145)");
+    fill(24, 83, 145);
     noStroke();
     rect(x - txtW - 25, y - 40, txtW + 50, 80, 20);
     triangle(x + 25, y + 20, x + 38, y + 42, x + 5, y + 40);
@@ -338,7 +338,7 @@ function drawBubble(visibleTxt, engTxt, x, y, isRightSide, isFinished) {
     rect(x - 25, y - 40, txtW + 50, 80, 20);
     triangle(x - 25, y + 20, x - 38, y + 42, x - 5, y + 40);
 
-    fill("rgb(24 83 145)");
+    fill(24, 83, 145);
     text(displayTxt, x, y);
   }
 }

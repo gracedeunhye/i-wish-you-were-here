@@ -1,10 +1,10 @@
 let conversations = [
-  "나무들이 겨울 옷으로 갈아입는다",        
-  "눈보러 왔어요 거기는 추워요?",
+  "나무들이 겨울 옷으로 갈아입는다",
+  "눈보러 왔어요! 거기는 추워요?",
   "오늘 같이 생일 축하했다",
   "태평양을 건너면 우리 볼 수 있지요?",
   "가족 사진 찍었다",
-  "저 오늘 졸업했어요",
+  "저 오늘 졸업했어요"
 ];
 
 let conversationsEnglish = [
@@ -13,59 +13,60 @@ let conversationsEnglish = [
   "today we celebrated birthdays",
   "can we see each other across the pacific?",
   "we took a familly photo",
-  "i graduated today",
+  "i graduated today"
 ];
 
 let replies = [
-  "저희는 아직 머물러 있나봐요",                     
-  "응 따뜻하게 입고 재밌게 놀거라",               
+  "저희는 아직 머물러 있나봐요",
+  "응 따뜻하게 입고 재밌게 놀아!",
   "생일 축하해요!",
-  "바다를 건너서 기다리고 있단다",
+  "바다를 건너 기다리고 있다",
   "기록해 놓길 잘 하셨어요",
-  "정말 축하한다 그동안 수고 많았다"
+  "정말 축하한다! 그동안 수고 많았다"
 ];
 
 let repliesEnglish = [
   "we're not ready for a change",
   "yes stay warm and have fun!",
   "please wish them a happy birthday!",
-  "we are waiting across the pacific",
+  "we are waiting across the ocean",
   "im glad you were able to take them",
   "congratulations! you've worked so hard"
 ];
 
-let dragLeftText = "함께 했으면 좋겠다";
+let dragLeftText = "이 순간을 함께 했으면 좋았을 텐데";
 let dragRightText = "i wish you were here";
-let revealCount = 0; 
 
+let revealCount = 0;
 let dropX = [];
 let dropY = [];
 let dropImg = [];
 
 let randomImgX = 0;
 let randomImgY = 0;
+let selectedModalImg;
 
 let imgs = [];
 let imgs2 = [];
 let sceneImgs = [];
 
-let currentConvo = 0; 
-
+let currentConvo = 0;
 let interFont;
 let index = 0;
 let index2 = 0;
 let timer = 0;
+
 let showImage = false;
+let isReplyImage = false;
 
 let closeX = 0;
 let closeY = 0;
-
 let hasClosedImage = false;
 
 let arrowOffset = 0;
 let arrowSpeed = 0.5;
 
-// async set up and asset loading
+// async setup
 
 async function setup() {
   createCanvas(windowWidth, windowHeight);
@@ -90,7 +91,8 @@ async function setup() {
   imgs[5] = await loadImage("grad.jpg");
   imgs2[5] = await loadImage("grad2.jpg");
 
-  // last scene
+// last scene
+  
   sceneImgs[0] = await loadImage("1.JPG");
   sceneImgs[1] = await loadImage("2.JPG");
   sceneImgs[2] = await loadImage("3.JPG");
@@ -121,7 +123,7 @@ async function setup() {
   sceneImgs[27] = await loadImage("28.JPG");
 }
 
-// main draw loop
+//text loop
 function draw() {
   background("rgb(227 239 247)");
 
@@ -130,33 +132,39 @@ function draw() {
     typeBlink = "|";
   }
 
-  let convoText = conversations[currentConvo];
-  let convoEng = conversationsEnglish[currentConvo];
-  let replyText = replies[currentConvo];
-  let replyEng = repliesEnglish[currentConvo];
-
-  let currentImg = imgs[currentConvo];
-  let currentImg2 = imgs2[currentConvo];
+  let currentImg;
+  let currentImg2;
+  if (currentConvo < conversations.length) {
+    currentImg = imgs[currentConvo];
+    currentImg2 = imgs2[currentConvo];
+  }
 
   if (showImage) {
-
     imageMode(CENTER);
     let imgW = width * 0.5;
     let imgH = height * 0.7;
+
     let centerX = width / 2;
     let centerY = height / 2;
 
-    if (currentImg) {
-      image(currentImg, centerX, centerY, imgW, imgH);
-    }
-    if (mouseIsPressed && currentImg2) {
-      image(currentImg2, centerX, centerY, imgW, imgH);
+    if (currentConvo >= conversations.length) {
+      centerX = randomImgX;
+      centerY = randomImgY;
+      if (selectedModalImg) {
+        image(selectedModalImg, centerX, centerY, imgW, imgH);
+      }
+    } else {
+      if (isReplyImage && mouseIsPressed && currentImg2) {
+        image(currentImg2, centerX, centerY, imgW, imgH);
+      } else if (currentImg) {
+        image(currentImg, centerX, centerY, imgW, imgH);
+      }
     }
 
     closeX = centerX + imgW / 2 - 25;
     closeY = centerY - imgH / 2 + 25;
 
-    fill("rgb(0, 0, 0, 0.6)");
+    fill(0, 0, 0, 0.6);
     noStroke();
     circle(closeX, closeY, 35);
 
@@ -170,75 +178,84 @@ function draw() {
     textSize(50);
     textLeading(50);
 
-    let isEven = (currentConvo % 2 === 0);
+    // speech bubbles
+    if (currentConvo < conversations.length) {
+      let convoText = conversations[currentConvo];
+      let convoEng = conversationsEnglish[currentConvo];
+      let replyText = replies[currentConvo];
+      let replyEng = repliesEnglish[currentConvo];
 
-    let x1 = width / 4;
-    let x2 = (width * 3) / 4;
-    if (isEven === false) {
-      x1 = (width * 3) / 4;
-      x2 = width / 4;
-    }
+      let isEven = (currentConvo % 2 === 0);
 
-    let y1 = height / 3;
-    let y2 = height / 2;
-
-    // first bubble
-    let visible1 = "";
-    for (let i = 0; i < index; i = i + 1) {
-      visible1 = visible1 + convoText[i];
-    }
-    drawBubble(visible1, convoEng, x1, y1, isEven === false, index >= convoText.length);
-
-    // reply bubble
-    if (index2 > 0) {
-      let visible2 = "";
-      for (let i = 0; i < index2; i = i + 1) {
-        visible2 = visible2 + replyText[i];
+      let x1 = width / 4;
+      let x2 = (width * 3) / 4;
+      if (isEven === false) {
+        x1 = (width * 3) / 4;
+        x2 = width / 4;
       }
-      if (index2 < replyText.length) {
-        visible2 = visible2 + typeBlink;
+
+      let y1 = height / 3;
+      let y2 = height / 2;
+
+      // first speech bubble
+      let visible1 = "";
+      for (let i = 0; i < index; i = i + 1) {
+        visible1 = visible1 + convoText[i];
       }
-      drawBubble(visible2, replyEng, x2, y2, isEven, index2 >= replyText.length);
-    }
+      drawBubble(visible1, convoEng, x1, y1, isEven === false, index >= convoText.length);
 
-    // timer
-    timer = timer + 1;
-    if (timer > 1) {
-      if (index < convoText.length) {
-        index = index + 1;
-      } else if (index2 > 0 && index2 < replyText.length) {
-        index2 = index2 + 1;
+      // reply bubble
+      if (index2 > 0) {
+        let visible2 = "";
+        for (let i = 0; i < index2; i = i + 1) {
+          visible2 = visible2 + replyText[i];
+        }
+        if (index2 < replyText.length) {
+          visible2 = visible2 + typeBlink;
+        }
+        drawBubble(visible2, replyEng, x2, y2, isEven, index2 >= replyText.length);
       }
-      timer = 0;
-    }
 
-    // '>' transition arrow
-    if (index >= convoText.length && index2 >= replyText.length && hasClosedImage) {
+      // typing Timer
+      timer = timer + 1;
+      if (timer > 1) {
+        if (index < convoText.length) {
+          index = index + 1;
+        } else if (index2 > 0 && index2 < replyText.length) {
+          index2 = index2 + 1;
+        }
+        timer = 0;
+      }
 
-      let arrowX = width / 4 + arrowOffset;
-      let arrowY = height * 0.72;
+      // transition Arrow
+      if (index >= convoText.length && index2 >= replyText.length && hasClosedImage) {
+        arrowOffset = arrowOffset + arrowSpeed;
+        if (arrowOffset > 15 || arrowOffset < 0) {
+          arrowSpeed = arrowSpeed * -1;
+        }
 
-      fill("rgb(0, 0, 0, 0.6)");
-      textSize(60);
-      textAlign(CENTER, CENTER);
-      text(">", arrowX, arrowY);
-    }
-  }
-}
+        let arrowX = width / 4;
+        let arrowY = height * 0.72;
 
-// last scene
-    if (currentConvo === 6) {
+        fill(0, 0, 0, 0.6);
+        textSize(60);
+        textAlign(CENTER, CENTER);
+        text(">", arrowX, arrowY);
+      }
+
+    // final scene
+    } else {
       imageMode(CENTER);
 
       for (let i = 0; i < dropX.length; i = i + 1) {
-        let oldPho = map(i, 0, dropX.length, 50, 255); 
+        let oldPho = map(i, 0, dropX.length, 50, 255);
 
         push();
         tint(255, oldPho);
-        image(dropImg[i], dropX[i], dropY[i], 200, 150);
+        image(dropImg[i], dropX[i], dropY[i], 180,200);
         pop();
       }
-
+  
       let x1 = width / 4;
       let y1 = height / 3;
       let x2 = (width * 3) / 4;
@@ -247,7 +264,7 @@ function draw() {
       let visibleLeft = dragLeftText.substring(0, revealCount);
       let visibleRight = dragRightText.substring(0, revealCount);
 
-      // Left Speech Bubble: "함께 했으면 좋겠다"
+      // "너도 여기 있었으면 좋았을 텐데"
       if (visibleLeft.length > 0) {
         let w1 = textWidth(visibleLeft);
         textAlign(LEFT, CENTER);
@@ -260,7 +277,7 @@ function draw() {
         text(visibleLeft, x1, y1);
       }
 
-      // Right Speech Bubble: "i wish you were here"
+      // "i wish you were here"
       if (visibleRight.length > 0) {
         let w2 = textWidth(visibleRight);
         textAlign(RIGHT, CENTER);
@@ -271,10 +288,22 @@ function draw() {
 
         fill(255);
         text(visibleRight, x2, y2);
+      }
+       arrowOffset = arrowOffset + arrowSpeed;
+      if (arrowOffset > 15 || arrowOffset < 0) {
+        arrowSpeed = arrowSpeed * -1;
+      }
+      let arrowX = width / 4;
+      let arrowY = height * 0.72;
+
+      fill(0, 0, 0, 0.6);
+      textSize(60);
+      textAlign(CENTER, CENTER);
+      text(">", arrowX, arrowY);
+    }
   }
 }
 
-// speech bubbles
 
 function drawBubble(visibleTxt, engTxt, x, y, isRightSide, isFinished) {
   if (visibleTxt.length === 0) {
@@ -323,18 +352,46 @@ function checkHover(x, y, engTxt, isRightSide) {
   }
 }
 
-// advance to next convo
+// mousedrag for reveal
+
+function mouseDragged() {
+  if (currentConvo >= conversations.length && showImage === false) {
+    if (sceneImgs.length > 0) {
+      let pic = random(sceneImgs);
+      dropX.push(mouseX);
+      dropY.push(mouseY);
+      dropImg.push(pic);
+    }
+
+    if (revealCount < dragLeftText.length || revealCount < dragRightText.length) {
+      revealCount = revealCount + 1;
+    }
+  }
+}
+
 function nextConvo() {
   index = 0;
   index2 = 0;
   timer = 0;
   showImage = false;
-
   hasClosedImage = false;
 
-  if (currentConvo < conversations.length - 1) {
+  if (currentConvo < conversations.length) {
     currentConvo = currentConvo + 1;
   }
+}
+
+function resetSketch() {
+  currentConvo = 0;
+  index = 0;
+  index2 = 0;
+  timer = 0;
+  showImage = false;
+  hasClosedImage = false;
+  revealCount = 0;
+  dropX = [];
+  dropY = [];
+  dropImg = [];
 }
 
 function mousePressed() {
@@ -346,51 +403,82 @@ function mousePressed() {
 
     if (dist(mouseX, mouseY, closeX, closeY) < 40) {
       showImage = false;
-      index2 = 1;            
-      hasClosedImage = true; 
+      index2 = 1;
+      hasClosedImage = true;
     }
   } else {
-    let convoText = conversations[currentConvo];
-    let convoEng = conversationsEnglish[currentConvo];
-    let replyText = replies[currentConvo];
-    let replyEng = repliesEnglish[currentConvo];
-    let isEven = (currentConvo % 2 === 0);
+    if (currentConvo < conversations.length) {
+      let convoText = conversations[currentConvo];
+      let convoEng = conversationsEnglish[currentConvo];
+      let replyText = replies[currentConvo];
+      let replyEng = repliesEnglish[currentConvo];
+      let isEven = (currentConvo % 2 === 0);
 
-    let x1 = width / 4;
-    let x2 = (width * 3) / 4;
-    if (isEven === false) {
-      x1 = (width * 3) / 4;
-      x2 = width / 4;
-    }
+      let x1 = width / 4;
+      let x2 = (width * 3) / 4;
+      if (isEven === false) {
+        x1 = (width * 3) / 4;
+        x2 = width / 4;
+      }
 
-    let y1 = height / 3;
-    let y2 = height / 2;
+      let y1 = height / 3;
+      let y2 = height / 2;
 
-    if (index >= convoText.length && checkHover(x1, y1, convoEng, isEven === false)) {
-      showImage = true;
-    }
+      // click bubble 1 to load image
+      if (index >= convoText.length && checkHover(x1, y1, convoEng, isEven === false)) {
+        showImage = true;
+        isReplyImage = false;
+      }
 
-    if (index2 >= replyText.length && checkHover(x2, y2, replyEng, isEven)) {
-      showImage = true;
-    }
+      if (index2 >= replyText.length && checkHover(x2, y2, replyEng, isEven)) {
+        showImage = true;
+        isReplyImage = true;
+      }
 
-    if (index >= convoText.length && index2 >= replyText.length && hasClosedImage) {
-      let arrowX = width / 4 + arrowOffset;
+      // click > to go to next scene
+      if (index >= convoText.length && index2 >= replyText.length && hasClosedImage) {
+        let arrowX = width / 4;
+        let arrowY = height * 0.72;
+        if (dist(mouseX, mouseY, arrowX, arrowY) < 50) {
+          nextConvo();
+        }
+      }
+
+   } else {
+      let arrowX = width / 4;
       let arrowY = height * 0.72;
+
       if (dist(mouseX, mouseY, arrowX, arrowY) < 50) {
-        nextConvo();
+        resetSketch();
+      } else {
+        // drop photo
+        if (sceneImgs.length > 0) {
+          let pic = random(sceneImgs);
+          dropX.push(mouseX);
+          dropY.push(mouseY);
+          dropImg.push(pic);
+        }
+        if (revealCount < dragLeftText.length || revealCount < dragRightText.length) {
+          revealCount++;
+        }
       }
     }
   }
 }
 
 function keyPressed() {
-  let convoText = conversations[currentConvo];
-  let replyText = replies[currentConvo];
+  if (currentConvo < conversations.length) {
+    let convoText = conversations[currentConvo];
+    let replyText = replies[currentConvo];
 
-  if (index >= convoText.length && index2 >= replyText.length && hasClosedImage) {
+    if (index >= convoText.length && index2 >= replyText.length && hasClosedImage) {
+      if (key === '>' || key === '.' || keyCode === RIGHT_ARROW) {
+        nextConvo();
+      }
+    }
+  } else {
     if (key === '>' || key === '.' || keyCode === RIGHT_ARROW) {
-      nextConvo();
+      resetSketch();
     }
   }
 }

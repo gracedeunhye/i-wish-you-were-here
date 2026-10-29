@@ -1,26 +1,26 @@
 let conversations = [
   "나무들이 겨울 옷으로 갈아입는다",
   "눈보러 왔어요! 거기는 추워요?",
-  "오늘 같이 생일 축하했다",
-  "태평양을 건너면 우리 볼 수 있지요?",
+  "오늘 같이 생일 파티했어",
+  "태평양을 건너면 우리 볼 수 있어요?",
   "가족 사진 찍었다",
-  "저 오늘 졸업했어요"
+  "저 오늘 졸업했어요!"
 ];
 
 let conversationsEnglish = [
   "the leaves are changing colors",
   "we came to see snow! is it cold there?",
-  "today we celebrated birthdays",
+  "today we celebrated birthdays in the house",
   "can we see each other across the pacific?",
-  "we took a familly photo",
-  "i graduated today"
+  "we took familly photos",
+  "i graduated today!"
 ];
 
 let replies = [
-  "저희는 아직 머물러 있나봐요",
+  "저희는 아직 가을에 머물러 있어요",
   "응 따뜻하게 입고 재밌게 놀아!",
   "생일 축하해요!",
-  "바다를 건너 기다리고 있다",
+  "바다를 건너 기다리고 있어",
   "기록해 놓길 잘 하셨어요",
   "정말 축하한다! 그동안 수고 많았다"
 ];
@@ -164,7 +164,7 @@ function draw() {
     closeX = centerX + imgW / 2 - 25;
     closeY = centerY - imgH / 2 + 25;
 
-    fill(0, 0, 0, 0.6);
+    fill("rgb(24 83 145)");
     noStroke();
     circle(closeX, closeY, 35);
 
@@ -237,7 +237,7 @@ function draw() {
         let arrowX = width / 4;
         let arrowY = height * 0.72;
 
-        fill(0, 0, 0, 0.6);
+        fill("rgb(24 83 145)");
         textSize(60);
         textAlign(CENTER, CENTER);
         text(">", arrowX, arrowY);
@@ -252,7 +252,7 @@ function draw() {
 
         push();
         tint(255, oldPho);
-        image(dropImg[i], dropX[i], dropY[i], 180,200);
+        image(dropImg[i], dropX[i], dropY[i], 175,200);
         pop();
       }
   
@@ -296,7 +296,7 @@ function draw() {
       let arrowX = width / 4;
       let arrowY = height * 0.72;
 
-      fill(0, 0, 0, 0.6);
+      fill("rgb(24 83 145)");
       textSize(60);
       textAlign(CENTER, CENTER);
       text(">", arrowX, arrowY);
@@ -358,9 +358,9 @@ function mouseDragged() {
   if (currentConvo >= conversations.length && showImage === false) {
     if (sceneImgs.length > 0) {
       let pic = random(sceneImgs);
-      dropX.push(mouseX);
-      dropY.push(mouseY);
-      dropImg.push(pic);
+  dropX[dropX.length] = mouseX;
+  dropY[dropY.length] = mouseY;
+  dropImg[dropImg.length] = pic;
     }
 
     if (revealCount < dragLeftText.length || revealCount < dragRightText.length) {
@@ -472,12 +472,12 @@ function keyPressed() {
     let replyText = replies[currentConvo];
 
     if (index >= convoText.length && index2 >= replyText.length && hasClosedImage) {
-      if (key === '>' || key === '.' || keyCode === RIGHT_ARROW) {
+     if (hasClosedImage && keyCode === RIGHT_ARROW) {
         nextConvo();
       }
     }
   } else {
-    if (key === '>' || key === '.' || keyCode === RIGHT_ARROW) {
+    if (hasClosedImage && keyCode === RIGHT_ARROW) {
       resetSketch();
     }
   }

@@ -454,9 +454,9 @@ function mousePressed() {
         // drop photo
         if (sceneImgs.length > 0) {
           let pic = random(sceneImgs);
-          dropX.push(mouseX);
-          dropY.push(mouseY);
-          dropImg.push(pic);
+      dropX[dropX.length] = mouseX;
+      dropY[dropY.length] = mouseY;
+      dropImg[dropImg.length] = pic;
         }
         if (revealCount < dragLeftText.length || revealCount < dragRightText.length) {
           revealCount++;
